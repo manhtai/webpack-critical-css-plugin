@@ -1,0 +1,13 @@
+{
+  "name": "webpack-critical-css-plugin",
+  "version": "0.0.1",
+  "description": "Webpack plugin for generating critical css using penthouse",
+  "main": "index.js",
+  "repository": "git@github.com:manhtai/webpack-critical-css-plugin.git",
+  "author": "manhtai <vo@manhtai.com>",
+  "license": "MIT",
+  "dependencies": {
+    "penthouse": "^1.4.0",
+    "webpack-sources": "^1.1.0"
+  }
+}

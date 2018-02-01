@@ -17,11 +17,12 @@ CriticalCssPlugin.prototype.apply = function(compiler) {
         const html = self.options.criticalHTML[chunk.name];
 
         if (html) {
-          // Get css output file to get critical parts from
-          const cssFile = chunk.files.filter(filename =>
-            filename.startsWith(chunk.name) && filename.endsWith('.css')
-          )[0];
-          const cssSource = compilation.assets[cssFile].source();
+          // Get css output file to get critical parts from,
+          // we only get from the first file for now
+          const cssFile = chunk.files.filter(filename => filename.endsWith('.css'))[0];
+          const cssSource = compilation.assets[cssFile] && compilation.assets[cssFile].source();
+
+          if (!cssSource) return;
 
           try {
             // Get critical css

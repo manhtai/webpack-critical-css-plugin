@@ -15,34 +15,33 @@ CriticalCssPlugin.prototype.apply = function(compiler) {
       Promise.all(compilation.chunks.map(async(chunk) => {
         // Check for html source
         const html = self.options.criticalHTML[chunk.name];
+        if (!html) return;
 
-        if (html) {
-          // Get css output file to get critical parts from,
-          // we only get from the first file for now
-          const cssFile = chunk.files.filter(filename => filename.endsWith('.css'))[0];
-          const cssSource = compilation.assets[cssFile] && compilation.assets[cssFile].source();
+        // Get css output file to get critical parts from,
+        // we only get from the first file for now
+        const cssFile = chunk.files.filter(filename => filename.endsWith('.css'))[0];
 
-          if (!cssSource) return;
+        const cssSource = compilation.assets[cssFile] && compilation.assets[cssFile].source();
+        if (!cssSource) return;
 
-          try {
-            // Get critical css
-            const criticalCss = await penthouse({
-              url: html,
-              cssString: cssSource,
-            });
+        try {
+          // Get critical css
+          const criticalCss = await penthouse({
+            url: html,
+            cssString: cssSource,
+          });
 
-            // Generate critical css from styles.css => styles.critical.css
-            const criticalFile = cssFile.slice(0, -4) + '.critical.css';
-            const criticalSource = new RawSource(criticalCss);
+          // Generate critical css from styles.css => styles.critical.css
+          const criticalFile = cssFile.slice(0, -4) + '.critical.css';
+          const criticalSource = new RawSource(criticalCss);
 
-            // Push to assets
-            compilation.assets[criticalFile] = criticalSource;
-            chunk.files.push(criticalFile);
+          // Push to assets
+          compilation.assets[criticalFile] = criticalSource;
+          chunk.files.push(criticalFile);
 
-            console.log("Done get critical css!");
-          } catch (e) {
-            console.log("Error while get critical css:", e);
-          }
+          console.log("Done get critical css!");
+        } catch (e) {
+          console.log("Error while get critical css:", e);
         }
 
       })).then(() => callback()).catch(err => callback(err));
